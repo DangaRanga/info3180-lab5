@@ -40,6 +40,7 @@ def secure_page():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('secure_page'))
+
     form = LoginForm()
 
     if request.method == 'POST' and form.validate_on_submit():
@@ -55,10 +56,12 @@ def login():
             login_user(user)
             flash('Logged in successfully', 'success')
             return redirect(url_for("secure_page"))
-        # remember to flash a message to the user
-        # they should be redirected to a secure-page route instead
-        flash_errors(form)
-        return redirect(url_for("home"))
+
+        else:
+            flash('Username {} or Password is incorrect.'.format(username),
+                  'danger')
+
+    flash_errors(form)
     return render_template("login.html", form=form)
 
 
@@ -76,6 +79,15 @@ def logout():
 @login_manager.user_loader
 def load_user(id):
     return UserProfile.query.get(int(id))
+
+
+def flash_errors(form):
+    for field, errors in form.errors.items():
+        for error in errors:
+            flash(u"Error in the %s field - %s" % (
+                getattr(form, field).label.text,
+                error
+            ), 'danger')
 
 ###
 # The functions below should be applicable to all Flask apps.
