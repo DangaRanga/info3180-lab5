@@ -42,7 +42,7 @@ def login():
         return redirect(url_for('secure_page'))
     form = LoginForm()
 
-    if form.validate_on_submit():
+    if request.method == 'POST' and form.validate_on_submit():
         # Get the username and password values from the form.
         username = form.username.data
         password = form.password.data
