@@ -42,26 +42,23 @@ def login():
         return redirect(url_for('secure_page'))
     form = LoginForm()
 
-    if request.method == 'POST' and form.validate_on_submit():
-        # change this to actually validate the entire form submission
-        # and not just one field
-        if form.username.data:
-            # Get the username and password values from the form.
-            username = form.username.data
-            password = form.password.data
+    if form.validate_on_submit():
+        # Get the username and password values from the form.
+        username = form.username.data
+        password = form.password.data
 
-            user = UserProfile.query.filter_by(username=username).first()
+        user = UserProfile.query.filter_by(username=username).first()
 
-            if user is not None and check_password_hash(
-                    user.password, password):
+        if user is not None and check_password_hash(
+                user.password, password):
 
-                login_user(user)
-                flash('Logged in successfully', 'success')
-                return redirect(url_for("secure_page"))
-            # remember to flash a message to the user
-            # they should be redirected to a secure-page route instead
-            flash_errors(form)
-            return redirect(url_for("home"))
+            login_user(user)
+            flash('Logged in successfully', 'success')
+            return redirect(url_for("secure_page"))
+        # remember to flash a message to the user
+        # they should be redirected to a secure-page route instead
+        flash_errors(form)
+        return redirect(url_for("home"))
     return render_template("login.html", form=form)
 
 
